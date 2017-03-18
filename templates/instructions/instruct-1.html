@@ -1,0 +1,39 @@
+<div id="consent">
+
+	<hr />
+
+	<div class="instructions well">
+
+	    <p>
+		    You have finished all the three practice trials. Now you can start with the formal trials. There will not be feedback after your responses any more.
+	    </p>
+
+	    <script type="text/javascript">
+	    //console.log(psiTurk.getInstructionIndicator())
+            function btntest_onclick()
+            {
+                currentview = new PracticeExperiment(false, 1, 1);
+            }
+	    </script>
+
+	</div>
+
+	<hr />
+
+
+    <div class="instructionsnav">
+        <div class="row">
+            <div class="col-xs-2">
+            	<!-- no previous button on first screen -->
+            </div>
+            <div class="col-xs-8">
+            </div>
+            <div class="col-xs-2">
+                <button type="button" id="next" value="next" class="btn btn-primary btn-lg continue" onclick="return btntest_onclick()">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

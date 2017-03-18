@@ -1,0 +1,39 @@
+<div id="consent">
+
+    <hr />
+
+    <div class="instructions well">
+
+        <p>
+            You have finished 100 trials! Now you can take a break if you want. When you are ready for the last 100 trials, click the button on the bottom right corner of the screen.
+        </p>
+
+        <script type="text/javascript">
+        //console.log(psiTurk.getInstructionIndicator())
+            function btntest_onclick()
+            {
+                currentview = new PracticeExperiment(false, 2, 1, true);
+            }
+        </script>
+
+    </div>
+
+    <hr />
+
+
+    <div class="instructionsnav">
+        <div class="row">
+            <div class="col-xs-2">
+                <!-- no previous button on first screen -->
+            </div>
+            <div class="col-xs-8">
+            </div>
+            <div class="col-xs-2">
+                <button type="button" id="next" value="next" class="btn btn-primary btn-lg continue" onclick="return btntest_onclick()">
+                Next <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

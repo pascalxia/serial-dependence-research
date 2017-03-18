@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--
+	The ad.html has a very specific format.
+
+	Really there are two "ads" contained within this file.
+
+	The first ad displays to participants who are browsing
+	the Amazon Mechanical Turk site but have not yet accepted
+	your hit.
+
+	The second part of the ad display after the person selected
+	"Accept HIT" on the Amazon website.  This will reload the
+	ad and will display a button which, when clicked, will pop
+	open a new browser window pointed at your local psiTurk
+	server (assuming it is running and accessible to the Internet).
+
+	See comments throughout for hints
+
+-->
+
+
+<html>
+	<head>
+        <meta charset="utf-8" />
+		<title>Psychology Experiment</title>
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" type="text/css" />
+		<link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+	</head>
+	<body>
+		<div id="container-consent">
+			<div id="consent">
+
+			    <hr />
+
+			    <div class="legal well">
+
+			        <p>
+			            Thank you for your participation! This experiment is about orientation perception. In each trial, a patch of dark and bright stripes will be displayed for 0.5 seconds. The stripes will appear at a random location each time and are preceded by a black cross to show you where the stripes are going to appear. Then a red circle will appear at the center of the screen. Please move your mouse cursor into the red circle. Then the red circle will become green and a black bar will be displayed as well. Please use the mouse to adjust the orientation of the bar so that it looks identical to the orientation of the stripes that you have just seen. After you match the orientation, you can click the left mouse key to proceed to the next trial.
+					</p>
+					<p>
+			            There are 60 trials, which take about 10 minutes in total. When you finish 30 trials, the web page will suggest you take a break. When you are ready for the next 30 trials, just click the next button on the right bottom corner of the screen.
+			        </p>
+			        <p>
+			            Please complete this experiment on a computer or laptop instead of cellphone or tablet. You will be granted a confirmation code at the end of the survey. Please click the next button again after you have copied the confirmation code to officially complete the survey. After you advance from this page, you will be brought to a consent form where you can agree to the terms. Again, thank you for your participation!
+			        </p>
+
+		            <script type="text/javascript">
+		        		function openwindow() {
+		            		popup = window.open('{{ server_location }}/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+1024+',height='+768+'');
+		          		}
+		            </script>
+
+			    </div>
+
+			    <hr />
+
+
+			    <div class="instructionsnav">
+			        <div class="row">
+			            <div class="col-xs-2">
+			                <!-- no previous button on first screen -->
+			            </div>
+			            <div class="col-xs-8">
+			            </div>
+			            <div class="col-xs-2">
+	                    	<button type="button" class="btn btn-primary btn-lg" onClick="openwindow();">
+	                		  Next
+	                		</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+
+
+	</body>
+</html>
