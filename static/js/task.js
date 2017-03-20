@@ -47,11 +47,10 @@ var instructionPages = [ // add as a list as many pages as you like
 ********************/
 	//set parameters
 
-var PracticeExperiment = function(practiceExperement, numOfResponces, numOfResponces, secondTrial) {
+var PracticeExperiment = function(practiceExperement, numOfResponces, secondTrial) {
 
 	// variable to deferentiate practice, first, and second trial
-	var secondTrial = secondTrial || false
-	var trialNum = trialNum;
+	var secondTrial = secondTrial
 	var numOfResponces = numOfResponces;
 	var practiceExperement = practiceExperement;
 
@@ -319,7 +318,6 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, numOfRespo
 					//save the number of tries
 					ctx.fillStyle = 'LawnGreen';
 					ctx.fillText("Accurate enough! Try one more time.", textX, textY);
-					psiTurk.recordUnstructuredData("tryNumber", tryNumber)
 					setTimeout(function(){
 						pause();
 						setTimeout(startTrial, pauseTime);
@@ -342,7 +340,7 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, numOfRespo
 					pause();
 					setTimeout(startTrial, pauseTime);
 				}, textTime);
-			}else if(secondTrial){
+			}else if(secondTrial && tryNumber==3){
 				setTimeout(function(){
 					pause();
 					setTimeout(psiTurk.showPage('instructions/instruct-3.html'), pauseTime);
@@ -353,6 +351,10 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, numOfRespo
 					setTimeout(psiTurk.showPage('instructions/instruct-2.html'), pauseTime);
 				}, textTime);
 			}
+			psiTurk.recordTrialData({'tryNumber':tryNumber,
+                                     'angle':angle,
+                                     }
+                                   );
 		}
 	}
 

@@ -11,10 +11,20 @@
 
         <script type="text/javascript">
         //console.log(psiTurk.getInstructionIndicator())
-        function btntest_onclick()
-        {
-            psiTurk.showPage('instructions/thanksforpartisipation.html');
-        }
+            $("#next").click(function () {
+                psiTurk.saveData({
+                    success: function(){
+                        psiTurk.computeBonus('compute_bonus', function() {
+                            psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+                        });
+                    },
+                    error: prompt_resubmit});
+            });
+
+            prompt_resubmit = function() {
+                document.body.innerHTML = error_message;
+                $("#resubmit").click(resubmit);
+            };
 
         </script>
 
@@ -31,7 +41,7 @@
             <div class="col-xs-8">
             </div>
             <div class="col-xs-2">
-                <button type="button" id="next" value="next" class="btn btn-primary btn-lg continue" onclick="return btntest_onclick()">
+                <button type="button" id="next" value="next" class="btn btn-primary btn-lg continue">
                 Next <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
             </div>
