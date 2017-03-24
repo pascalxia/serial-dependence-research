@@ -11,21 +11,6 @@
 
         <script type="text/javascript">
         //console.log(psiTurk.getInstructionIndicator())
-            $("#next").click(function () {
-                psiTurk.saveData({
-                    success: function(){
-                        psiTurk.computeBonus('compute_bonus', function() {
-                            psiTurk.completeHIT(); // when finished saving compute bonus, the quit
-                        });
-                    },
-                    error: prompt_resubmit});
-            });
-
-            prompt_resubmit = function() {
-                document.body.innerHTML = error_message;
-                $("#resubmit").click(resubmit);
-            };
-
         </script>
 
     </div>

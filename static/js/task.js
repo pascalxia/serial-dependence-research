@@ -313,7 +313,11 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 					setTimeout(function(){
 						pause();
 						setTimeout(psiTurk.showPage('instructions/instruct-1.html'), pauseTime);
+						$('#next').click(function(){
+							currentview = new PracticeExperiment(false, 2, false);
+						});
 					}, textTime);
+
 				} else{
 					//save the number of tries
 					ctx.fillStyle = 'LawnGreen';
@@ -344,11 +348,28 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 				setTimeout(function(){
 					pause();
 					setTimeout(psiTurk.showPage('instructions/instruct-3.html'), pauseTime);
+					$("#next").click(function () {
+					    psiTurk.saveData({
+					        success: function(){
+					            psiTurk.computeBonus('compute_bonus', function() {
+					                psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+					            });
+					        },
+					        error: prompt_resubmit});
+					});
+
+					prompt_resubmit = function() {
+					    document.body.innerHTML = error_message;
+					    $("#resubmit").click(resubmit);
+					};
 				}, textTime);
 			}else{
 				setTimeout(function(){
 					pause();
 					setTimeout(psiTurk.showPage('instructions/instruct-2.html'), pauseTime);
+					$('#next').click(function(){
+						currentview = new PracticeExperiment(false, 3, true);
+					});
 				}, textTime);
 			}
 			psiTurk.recordTrialData({'tryNumber':tryNumber,

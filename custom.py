@@ -34,7 +34,7 @@ custom_code = Blueprint('custom_code', __name__, template_folder='templates', st
 #----------------------------------------------
 @custom_code.route('/my_custom_view')
 def my_custom_view():
-	current_app.logger.info("Reached /my_custom_view")  # Print message to server.log for debugging 
+	current_app.logger.info("Reached /my_custom_view")  # Print message to server.log for debugging
 	try:
 		return render_template('custom.html')
 	except TemplateNotFound:
@@ -84,11 +84,11 @@ def compute_bonus():
         user_data = loads(user.datastring) # load datastring from JSON
         bonus = 0
 
-        for record in user_data['data']: # for line in data file
-            trial = record['trialdata']
-            if trial['phase']=='TEST':
-                if trial['hit']==True:
-                    bonus += 0.02
+        # for record in user_data['data']: # for line in data file
+        #     trial = record['trialdata']
+        #     if trial['phase']=='TEST':
+        #         if trial['hit']==True:
+        #             bonus += 0.02
         user.bonus = bonus
         db_session.add(user)
         db_session.commit()
@@ -97,4 +97,4 @@ def compute_bonus():
     except:
         abort(404)  # again, bad to display HTML, but...
 
-    
+
