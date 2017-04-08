@@ -13,22 +13,17 @@ var mycounterbalance = counterbalance;  // they tell you which condition you hav
 
 // All pages to be loaded
 var pages = [
-	// "instructions/instruct-1.html",
-	"instructions/instruct-1.html",	
-	"instructions/instruct-2.html",
-	"instructions/instruct-3.html",
-	"instructions/instruct-ready.html",
-	"instructions/thanksforpartisipation.html",
-	"stage.html",
+	"before_formal.html",	
+	"break.html",
+	"end.html",
+	"before_practice.html",
+	"stage.html"
 ];
 
 psiTurk.preloadPages(pages);
 
 var instructionPages = [ // add as a list as many pages as you like
-	// "instructions/instruct-1.html",
-	// "instructions/instruct-2.html",
-	// "instructions/instruct-3.html",
-	"instructions/instruct-ready.html"
+	"before_practice.html"
 ];
 
 
@@ -367,21 +362,21 @@ var experiment = function(practice, nTrial, finish) {
 };
 
 function finishPractice(){
-	psiTurk.showPage('instructions/instruct-1.html');
+	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
 		currentview = new experiment(false, 3, finishRun1);
 	});
 }
 
 function finishRun1(){
-	psiTurk.showPage('instructions/instruct-2.html');
+	psiTurk.showPage('break.html');
 	$('#next').click(function(){
 		currentview = new experiment(false, 3, finishRun2);
 	});
 }
 
 function finishRun2(){
-	psiTurk.showPage('instructions/instruct-3.html');
+	psiTurk.showPage('end.html');
 	$("#next").click(function () {
 		psiTurk.saveData({
 			success: function(){
