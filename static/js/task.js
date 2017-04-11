@@ -13,22 +13,17 @@ var mycounterbalance = counterbalance;  // they tell you which condition you hav
 
 // All pages to be loaded
 var pages = [
-	// "instructions/instruct-1.html",
-	"instructions/thanksforpartisipation.html",
-	"instructions/instruct-2.html",
-	"instructions/instruct-3.html",
-	"instructions/instruct-ready.html",
-	"stage.html",
-	"instructions/instruct-1.html"
+	"before_formal.html",	
+	"break.html",
+	"end.html",
+	"before_practice.html",
+	"stage.html"
 ];
 
 psiTurk.preloadPages(pages);
 
 var instructionPages = [ // add as a list as many pages as you like
-	// "instructions/instruct-1.html",
-	// "instructions/instruct-2.html",
-	// "instructions/instruct-3.html",
-	"instructions/instruct-ready.html"
+	"before_practice.html"
 ];
 
 
@@ -45,23 +40,12 @@ var instructionPages = [ // add as a list as many pages as you like
 /********************
 * PRACTICE*
 ********************/
-	//set parameters
+//set parameters
 
-var PracticeExperiment = function(practiceExperement, numOfResponces, secondTrial) {
-
-	// variable to deferentiate practice, first, and second trial
-	var secondTrial = secondTrial
-	var numOfResponces = numOfResponces;
-	var practiceExperement = practiceExperement;
-
+var experiment = function(practice, nTrial, finish) {
 	// Load the stage.html snippet into the body of the page
 	psiTurk.showPage('stage.html');
-
-
-
-
-
-	var tryQId = "QID19";
+	//set parameters
 	var stimulusX = 0.25;
 	var stimulusY = 0.5;
 	var radius = 10;
@@ -74,13 +58,14 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 	var crossTime = 300;
 	var displayTime = 500;
 	var pauseTime = 500;
+	var postTrialPauseTime = 500;
 	var errorThresh = 20;
 	var textX = 100;
 	var textY = 100;
 	var textTime = 1000;
-	var tryNumber = 0;
-
-	var successNumOfPractise = 0
+	if (practice) {
+		var nTry = 0;
+	}
 
 
 	//set canvas
@@ -94,21 +79,151 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 
 	//prepare some variables
 	var centerX = canvas.width / 2;
-    var centerY = canvas.height / 2;
+	var centerY = canvas.height / 2;
 	var centerXPage = centerX + $("#myCanvas").offset().left;
 	var centerYPage = centerY + $("#myCanvas").offset().top;
 	var destX = stimulusX*(canvas.width-displaysize*Math.sqrt(2))+displaysize*Math.sqrt(2)/2;
-    var destY = stimulusY*(canvas.height-displaysize*Math.sqrt(2))+displaysize*Math.sqrt(2)/2;
+	var destY = stimulusY*(canvas.height-displaysize*Math.sqrt(2))+displaysize*Math.sqrt(2)/2;
 	var stimulus = Math.random()*360-180;
 
+	//define the trial procedure
+	trialStepA = [
+		{
+			action: function(){
+				//hide cursor within canvas
+				$("#myCanvas").css('cursor', 'none');
+				screenForCross(destX, destY);}, 
+			time: crossTime
+		},
+		{
+			action: function(){screenForStimulus(destX, destY, stimulus);}, 
+			time: displayTime
+		},
+		{
+			action: function(){screenForPause();}, 
+			time: pauseTime
+		},
+		{
+			action: function(){
+				//show the cursor
+				$("#myCanvas").css('cursor', 'auto');
+				//drawa the canvas for waiting for bring back the cursor
+				screenForWait();
+				//add listener to check whether the cursor is brought to center
+				document.addEventListener("mousemove", proceedAfterMoveToCenter);
+			}
+		}
+	];
 
-	//draw a grey background first
-	drawBackground();
-	//hide cursor within canvas
-	$("#myCanvas").css('cursor', 'none');
+	var trialInd = 0;
+	doOneTrial(trialStepA);
+	
 
-	startTrial();
+	//functions for running the experiment--------------------
+	function doOneTrial(trialStepA){
+		step = 0;
+		doSteps(trialStepA, step);
+	}
 
+	function doSteps(trialStepA, step){
+		trialStepA[step].action();
+		if (step<trialStepA.length-1) {
+			setTimeout(
+				function(){doSteps(trialStepA, step+1);}, 
+				trialStepA[step].time);
+		}
+	}
+
+	//event handlers
+	//a listener that checks whether the cursor has gone back to center
+	function proceedAfterMoveToCenter(event){
+		cursorX = event.pageX;
+		cursorY = event.pageY;
+		//alert([cursorX-centerXPage, Math.pow(cursorY-centerYPage, 2), Math.pow(radius, 2)]);
+		if(Math.pow(cursorX-centerXPage, 2) + Math.pow(cursorY-centerYPage, 2) < Math.pow(radius, 2)){
+			//remove the center check listener
+			document.removeEventListener("mousemove", proceedAfterMoveToCenter);
+			//add listener to rotate the bar with cursor movement
+			document.addEventListener("mousemove", rotateBar);
+			//add listener to record response and advance to next page
+			if (practice) {
+				document.addEventListener("mousedown", practiceRespond);
+			} else{
+				document.addEventListener("mousedown", respond);
+			}
+		}
+	}
+	//a listener that rotates the bar with mouse movement
+	function rotateBar(event){
+		//calculate the angle according to cursor position
+		cursorX = event.pageX;
+		cursorY = event.pageY;
+		angle = Math.atan2(cursorY-centerYPage, cursorX-centerXPage)/Math.PI*180;
+		angle = angle + 90;
+		angle = limitOrient(angle);
+		//draw the canvas for screenForRespond
+		screenForRespond(angle);
+	}
+
+	function practiceRespond(event){
+		//remove event listeners
+		document.removeEventListener("mousemove", rotateBar);
+		document.removeEventListener("mousedown", practiceRespond);
+		//hide the bar
+		screenForPause();
+		//prepare text feedback
+		ctx.font = "bold 25px serif";
+		//check response
+		if(Math.abs(orientDiff(angle, stimulus)) > errorThresh){
+			ctx.fillStyle = 'tomato';
+			ctx.fillText("Not accurate enough. Please try again!", textX, textY);
+			//repeat this trial
+			setTimeout(function(){
+				setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
+			}, textTime);
+		} else{
+			ctx.fillStyle = 'LawnGreen';
+			ctx.fillText("Accurate enough! Going to next trial.", textX, textY);
+			setTimeout(function(){
+				//update the trial number to next trial
+				trialInd += 1;
+				if (trialInd<nTrial) {
+					//set a new value to stimulus
+					stimulus = Math.random()*360-180;
+					setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
+				} else {
+					finish();
+				}
+			}, textTime);
+		}
+	}
+
+	//a listener that records the response and advances to next page
+	function respond(event){
+		//remove event listeners
+		document.removeEventListener("mousemove", rotateBar);
+		document.removeEventListener("mousedown", respond);
+		//hide the bar
+		screenForPause();
+
+		//save data
+		psiTurk.recordTrialData({
+			'order': trialInd,
+            'angle': angle});
+
+		//update the trial number to next trial
+		trialInd += 1;
+
+		if (trialInd<nTrial) {
+			//set a new value to stimulus
+			stimulus = Math.random()*360-180;
+			setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
+		} else {
+			finish();
+		}
+	}
+
+	//drawing functions----------------------
 	function drawBackground(){
 		ctx.fillStyle = "#808080";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -197,187 +312,42 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 		return angle;
 	}
 
-	function showCross(destX, destY){
+	//functions to prepare the screen for different periods-------------
+	function screenForCross(destX, destY){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
 		//draw cross
 		drawCross(destX, destY);
 	}
 
-	function showStimulus(destX, destY, stimulus){
+	function screenForStimulus(destX, destY, stimulus){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
 		// draw arrow
 		drawArrow(destX, destY, stimulus);
 	}
 
-	function pause(){
+	function screenForPause(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
 	}
 
 	//while waiting for bring the cursor back to the center
-	function wait(){
+	function screenForWait(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
 		drawRedCircle();
 	}
 
-	function responding(angle){
+	function screenForRespond(angle){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
 		drawGreenCircle();
 		drawBar(angle);
 	}
 
-	function startTrial(){
-		//draw cross
-		showCross(destX, destY);
-		//after cross time
-		setTimeout(function(){
-			//draw the canvas for stimulus display
-			showStimulus(destX, destY, stimulus);
-			//after displayTime
-			setTimeout(function(){
-				//draw the canvas for pause
-				pause();
-				//after pauseTime
-				setTimeout(function(){
-					//show the cursor
-					$("#myCanvas").css('cursor', 'auto');
-					//drawa the canvas for waiting for bring back the cursor
-					wait();
-					//add listener to check whether the cursor is brought to center
-					document.addEventListener("mousemove", isAtCenter);
-				}, pauseTime);
-			}, displayTime);
-		}, crossTime);
-	}
+	
 
-	//event handlers
-	//a listener that checks whether the cursor has gone back to center
-	function isAtCenter(event){
-		cursorX = event.pageX;
-		cursorY = event.pageY;
-		//alert([cursorX-centerXPage, Math.pow(cursorY-centerYPage, 2), Math.pow(radius, 2)]);
-		if(Math.pow(cursorX-centerXPage, 2) + Math.pow(cursorY-centerYPage, 2) < Math.pow(radius, 2)){
-			//add listener to rotate the bar with cursor movement
-			document.addEventListener("mousemove", rotateBar);
-			//add listener to record response and advance to next page
-			document.addEventListener("mousedown", respond);
-			//remove the center check listener
-			document.removeEventListener("mousemove", isAtCenter);
-		}
-	}
-	//a listener that rotates the bar with mouse movement
-	function rotateBar(event){
-		//calculate the angle according to cursor position
-		cursorX = event.pageX;
-		cursorY = event.pageY;
-		angle = Math.atan2(cursorY-centerYPage, cursorX-centerXPage)/Math.PI*180;
-		angle = angle + 90;
-		angle = limitOrient(angle);
-		//draw the canvas for responding
-		responding(angle);
-	}
-	//a listener that records the response and advances to next page
-	function respond(event){
-		//remove event listeners
-		document.removeEventListener("mousemove", rotateBar);
-		document.removeEventListener("mousedown", respond);
-		//hide the bar
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawBackground();
-
-		/***********************
-		* responce for practise *
-		************************/
-		if (practiceExperement){
-			//update tryNumber
-			tryNumber += 1;
-			//check whether it is accurate enough
-			ctx.font = "bold 25px serif";
-			if(Math.abs(orientDiff(angle, stimulus)) > errorThresh){
-				ctx.fillStyle = 'tomato';
-				ctx.fillText("Not accurate enough. Please try again!", textX, textY);
-				setTimeout(function(){
-					pause();
-					setTimeout(startTrial, pauseTime);
-				}, textTime);
-			} else{
-				successNumOfPractise += 1
-
-				if(successNumOfPractise == 2) {
-					ctx.fillStyle = 'LawnGreen';
-					ctx.fillText("Going to next trial.", textX, textY);
-					setTimeout(function(){
-						pause();
-						setTimeout(psiTurk.showPage('instructions/instruct-1.html'), pauseTime);
-						$('#next').click(function(){
-							currentview = new PracticeExperiment(false, 2, false);
-						});
-					}, textTime);
-
-				} else{
-					//save the number of tries
-					ctx.fillStyle = 'LawnGreen';
-					ctx.fillText("Accurate enough! Try one more time.", textX, textY);
-					setTimeout(function(){
-						pause();
-						setTimeout(startTrial, pauseTime);
-					}, textTime);
-				}
-
-			}
-		}
-		/***********************
-		* responce for trial *
-		************************/
-		else{
-			//update the number of user's responces
-			tryNumber += 1;
-
-			if (tryNumber < numOfResponces){
-				//save the number of tries
-				psiTurk.recordUnstructuredData("tryNumber", tryNumber)
-				setTimeout(function(){
-					pause();
-					setTimeout(startTrial, pauseTime);
-				}, textTime);
-			}else if(secondTrial && tryNumber==3){
-				setTimeout(function(){
-					pause();
-					setTimeout(psiTurk.showPage('instructions/instruct-3.html'), pauseTime);
-					$("#next").click(function () {
-					    psiTurk.saveData({
-					        success: function(){
-					            psiTurk.computeBonus('compute_bonus', function() {
-					                psiTurk.completeHIT(); // when finished saving compute bonus, the quit
-					            });
-					        },
-					        error: prompt_resubmit});
-					});
-
-					prompt_resubmit = function() {
-					    document.body.innerHTML = error_message;
-					    $("#resubmit").click(resubmit);
-					};
-				}, textTime);
-			}else{
-				setTimeout(function(){
-					pause();
-					setTimeout(psiTurk.showPage('instructions/instruct-2.html'), pauseTime);
-					$('#next').click(function(){
-						currentview = new PracticeExperiment(false, 3, true);
-					});
-				}, textTime);
-			}
-			psiTurk.recordTrialData({'tryNumber':tryNumber,
-                                     'angle':angle,
-                                     }
-                                   );
-		}
-	}
 
 	function orientDiff(a, b){
 		diff = a-b;
@@ -389,14 +359,38 @@ var PracticeExperiment = function(practiceExperement, numOfResponces, secondTria
 		return(diff)
 	}
 
-	// // Register the response handler that is defined above to handle any
-	// // key down events.
-	// $("body").focus().keydown(response_handler);
-
-	// // Start the test
-	// next();
-
 };
+
+function finishPractice(){
+	psiTurk.showPage('before_formal.html');
+	$('#next').click(function(){
+		currentview = new experiment(false, 3, finishRun1);
+	});
+}
+
+function finishRun1(){
+	psiTurk.showPage('break.html');
+	$('#next').click(function(){
+		currentview = new experiment(false, 3, finishRun2);
+	});
+}
+
+function finishRun2(){
+	psiTurk.showPage('end.html');
+	$("#next").click(function () {
+		psiTurk.saveData({
+			success: function(){
+				psiTurk.computeBonus('compute_bonus', function() {
+				    psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+				});
+			},
+			error: prompt_resubmit});
+	});
+	prompt_resubmit = function() {
+		document.body.innerHTML = error_message;
+		$("#resubmit").click(resubmit);
+	};
+}
 
 // Task object to keep track of the current phase
 var currentview;
@@ -407,6 +401,8 @@ var currentview;
 $(window).load( function(){
     psiTurk.doInstructions(
     	instructionPages, // a list of pages you want to display in sequence
-    	function() { currentview = new PracticeExperiment(true, 0, 0); } // what you want to do when you are done with instructions
+    	function() { 
+    		currentview = new experiment(true, 3, finishPractice);
+    	} // what you want to do when you are done with instructions
     );
 });
