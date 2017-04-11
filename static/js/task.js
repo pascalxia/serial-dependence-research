@@ -13,7 +13,7 @@ var mycounterbalance = counterbalance;  // they tell you which condition you hav
 
 // All pages to be loaded
 var pages = [
-	"before_formal.html",	
+	"before_formal.html",
 	"break.html",
 	"end.html",
 	"before_practice.html",
@@ -46,7 +46,7 @@ var experiment = function(practice, nTrial, finish) {
 	// Load the stage.html snippet into the body of the page
 	psiTurk.showPage('stage.html');
 	//set parameters
-	var stimulusX = 0.25;
+	var stimulusX = 0.5;
 	var stimulusY = 0.5;
 	var radius = 10;
 	var crossWidth = 2;
@@ -59,32 +59,58 @@ var experiment = function(practice, nTrial, finish) {
 	var displayTime = 500;
 	var pauseTime = 500;
 	var postTrialPauseTime = 500;
-	var errorThresh = 20;
+	var errorThresh = 15;
 	var textX = 100;
 	var textY = 100;
-	var textTime = 1000;
+	var textTime = 1500;
 	if (practice) {
 		var nTry = 0;
 	}
 
+	// images
+	var gaborUrls = [
+		"http://i.imgur.com/cMbgmJl.jpg",
+		"http://i.imgur.com/CP2sOBf.jpg",
+		"http://i.imgur.com/qrRttYr.jpg",
+		"http://i.imgur.com/GBqU92E.jpg",
+		"http://i.imgur.com/EqduElq.jpg",
+		"http://i.imgur.com/xIGp6hR.jpg",
+		"http://i.imgur.com/gHwGe0t.jpg",
+		"http://i.imgur.com/6VLnewI.jpg",
+		"http://i.imgur.com/qIDSN3j.jpg",
+		"http://i.imgur.com/7JDyP81.jpg",
+		"http://i.imgur.com/1akBHGh.jpg",
+		"http://i.imgur.com/YwzmmjT.jpg",
+		"http://i.imgur.com/E4BSdy1.jpg",
+		"http://i.imgur.com/mZNHh2q.jpg",
+		"http://i.imgur.com/tLZYKzX.jpg",
+		"http://i.imgur.com/9awmagD.jpg",
+		"http://i.imgur.com/Nn5GmjK.jpg",
+		"http://i.imgur.com/L51lxG6.jpg"];
 
 	//set canvas
 	var canvas = document.getElementById('myCanvas');
-	// canvas.style.width = "731px"
-	// canvas.style.height = "382px"
-
 	canvas.width = 731;
 	canvas.height = 382;
 	var ctx = canvas.getContext('2d');
 
 	//prepare some variables
+	var gaborUrl = gaborUrls[Math.floor(Math.random()*gaborUrls.length)];
+	var gabor = new Image();
 	var centerX = canvas.width / 2;
-	var centerY = canvas.height / 2;
+    var centerY = canvas.height / 2;
 	var centerXPage = centerX + $("#myCanvas").offset().left;
 	var centerYPage = centerY + $("#myCanvas").offset().top;
-	var destX = stimulusX*(canvas.width-displaysize*Math.sqrt(2))+displaysize*Math.sqrt(2)/2;
-	var destY = stimulusY*(canvas.height-displaysize*Math.sqrt(2))+displaysize*Math.sqrt(2)/2;
+	var destX = stimulusX*canvas.width;
+	var destY = stimulusY*canvas.height;
 	var stimulus = Math.random()*360-180;
+
+	//set procedures
+	gabor.onload = doOneTrial;
+
+
+	//load gabor image and trigger experiment
+	gabor.src = gaborUrl;
 
 	//define the trial procedure
 	trialStepA = [
@@ -92,15 +118,15 @@ var experiment = function(practice, nTrial, finish) {
 			action: function(){
 				//hide cursor within canvas
 				$("#myCanvas").css('cursor', 'none');
-				screenForCross(destX, destY);}, 
+				screenForCross(destX, destY);},
 			time: crossTime
 		},
 		{
-			action: function(){screenForStimulus(destX, destY, stimulus);}, 
+			action: function(){showStimulus(destX, destY, stimulus);},
 			time: displayTime
 		},
 		{
-			action: function(){screenForPause();}, 
+			action: function(){screenForPause();},
 			time: pauseTime
 		},
 		{
@@ -117,7 +143,7 @@ var experiment = function(practice, nTrial, finish) {
 
 	var trialInd = 0;
 	doOneTrial(trialStepA);
-	
+
 
 	//functions for running the experiment--------------------
 	function doOneTrial(trialStepA){
@@ -129,7 +155,7 @@ var experiment = function(practice, nTrial, finish) {
 		trialStepA[step].action();
 		if (step<trialStepA.length-1) {
 			setTimeout(
-				function(){doSteps(trialStepA, step+1);}, 
+				function(){doSteps(trialStepA, step+1);},
 				trialStepA[step].time);
 		}
 	}
@@ -281,26 +307,16 @@ var experiment = function(practice, nTrial, finish) {
 		ctx.stroke();
 	}
 
-	function drawArrow(destX, destY, angle){
-		var anglePi = angle/180*Math.PI;
-		var headAnglePi = headAngle/180*Math.PI;
-		vectorX = barLength*Math.sin(anglePi);
-		vectorY = -barLength*Math.cos(anglePi);
-		startX = destX - 0.5*vectorX;
-		startY = destY - 0.5*vectorY;
-		endX = destX + 0.5*vectorX;
-		endY = destY + 0.5*vectorY;
-
-		ctx.beginPath();
-		ctx.lineWidth = barWidth;
-		ctx.moveTo(startX, startY);
-		ctx.lineTo(endX, endY);
-
-		ctx.moveTo(endX-headLen*Math.sin(anglePi-headAnglePi),endY+headLen*Math.cos(anglePi-headAnglePi));
-		ctx.lineTo(endX, endY);
-		ctx.lineTo(endX-headLen*Math.sin(anglePi+headAnglePi),endY+headLen*Math.cos(anglePi+headAnglePi));
-
-		ctx.stroke();
+	function drawGabor(destX, destY, orientation){
+		ctx.save();
+		// Move registration point to the center of the canvas
+		ctx.translate(destX, destY);
+		// Rotate
+		ctx.rotate(orientation/180*Math.PI);
+        var destWidth = displaysize;
+        var destHeight = displaysize;
+       	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
+		ctx.restore();
 	}
 
 	function limitOrient(angle){
@@ -320,11 +336,11 @@ var experiment = function(practice, nTrial, finish) {
 		drawCross(destX, destY);
 	}
 
-	function screenForStimulus(destX, destY, stimulus){
+	function showStimulus(destX, destY, stimulus){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
-		// draw arrow
-		drawArrow(destX, destY, stimulus);
+		// draw gabor
+		drawGabor(destX, destY, stimulus);
 	}
 
 	function screenForPause(){
@@ -346,7 +362,7 @@ var experiment = function(practice, nTrial, finish) {
 		drawBar(angle);
 	}
 
-	
+
 
 
 	function orientDiff(a, b){
@@ -401,7 +417,7 @@ var currentview;
 $(window).load( function(){
     psiTurk.doInstructions(
     	instructionPages, // a list of pages you want to display in sequence
-    	function() { 
+    	function() {
     		currentview = new experiment(true, 3, finishPractice);
     	} // what you want to do when you are done with instructions
     );
