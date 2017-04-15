@@ -63,6 +63,8 @@ var experiment = function(practice, nTrial, finish) {
 	var textX = 100;
 	var textY = 100;
 	var textTime = 1500;
+
+	var constantRotation = 20
 	if (practice) {
 		var nTry = 0;
 	}
@@ -103,7 +105,8 @@ var experiment = function(practice, nTrial, finish) {
 	var centerYPage = centerY + $("#myCanvas").offset().top;
 	var destX = stimulusX*canvas.width;
 	var destY = stimulusY*canvas.height;
-	var stimulus = Math.random()*360-180;
+	var stimulus
+	makeStimul();
 
 	//set procedures
 	gabor.onload = doOneTrial;
@@ -242,10 +245,25 @@ var experiment = function(practice, nTrial, finish) {
 
 		if (trialInd<nTrial) {
 			//set a new value to stimulus
-			stimulus = Math.random()*360-180;
+			// stimulus = Math.random()*360-180;
+			makeStimul();
 			setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 		} else {
 			finish();
+		}
+	}
+
+	function makeStimul(){
+		var firstStimulgenerated = false
+		if (stimulus == null){
+			stimulus = Math.random()*360-180
+			firstStimulgenerated = true
+		}
+		console.log(stimulus)
+
+		stimulus += constantRotation
+		if (!firstStimulgenerated && stimulus > 180){
+			stimulus = -180 + stimulus
 		}
 	}
 
@@ -312,7 +330,9 @@ var experiment = function(practice, nTrial, finish) {
 		// Move registration point to the center of the canvas
 		ctx.translate(destX, destY);
 		// Rotate
+
 		ctx.rotate(orientation/180*Math.PI);
+
         var destWidth = displaysize;
         var destHeight = displaysize;
        	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
@@ -380,14 +400,14 @@ var experiment = function(practice, nTrial, finish) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 3, finishRun1);
+		currentview = new experiment(false, 10, finishRun1);
 	});
 }
 
 function finishRun1(){
 	psiTurk.showPage('break.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 3, finishRun2);
+		currentview = new experiment(false, 10, finishRun2);
 	});
 }
 
