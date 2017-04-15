@@ -112,9 +112,31 @@ var experiment = function(practice, nTrial, finish) {
 	//set procedures
 	gabor.onload = doOneTrial;
 
-
 	//load gabor image and trigger experiment
 	gabor.src = gaborUrl;
+
+	//set button in case user missed the patch
+	if (practice){
+		document.getElementById('yes_button').style.visibility = 'hidden';
+	} else {
+		document.getElementById('yes_button').style.visibility = 'visible';
+		document.getElementById('yes_button').addEventListener("click", draw_missed_Gabor)
+	}
+
+
+	function draw_missed_Gabor(event){
+		ctx.save();
+		// Move registration point to the center of the canvas
+		ctx.translate(destX, destY);
+		// Rotate
+		ctx.rotate(stimulus/180*Math.PI);
+        var destWidth = displaysize;
+        var destHeight = displaysize;
+       	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
+		ctx.restore();
+
+		setTimeout(screenForWait, 1000);
+	}
 
 	//define the trial procedure
 	trialStepA = [
@@ -147,7 +169,6 @@ var experiment = function(practice, nTrial, finish) {
 
 	var trialInd = 0;
 	doOneTrial(trialStepA);
-
 
 	//functions for running the experiment--------------------
 	function doOneTrial(trialStepA){
@@ -350,7 +371,6 @@ var experiment = function(practice, nTrial, finish) {
 		// Move registration point to the center of the canvas
 		ctx.translate(destX, destY);
 		// Rotate
-
 		ctx.rotate(orientation/180*Math.PI);
 
         var destWidth = displaysize;
@@ -401,9 +421,6 @@ var experiment = function(practice, nTrial, finish) {
 		drawGreenCircle();
 		drawBar(angle);
 	}
-
-
-
 
 	function orientDiff(a, b){
 		diff = a-b;
