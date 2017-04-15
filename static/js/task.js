@@ -64,7 +64,6 @@ var experiment = function(practice, nTrial, finish) {
 	var textY = 100;
 	var textTime = 1500;
 
-	var constantRotation = 20
 	if (practice) {
 		var nTry = 0;
 	}
@@ -105,6 +104,8 @@ var experiment = function(practice, nTrial, finish) {
 	var centerYPage = centerY + $("#myCanvas").offset().top;
 	var destX = stimulusX*canvas.width;
 	var destY = stimulusY*canvas.height;
+	var possible_directions = [-1, 1]
+	var direction = possible_directions[Math.floor(Math.random() * possible_directions.length)];
 	var stimulus
 	makeStimul();
 
@@ -261,10 +262,29 @@ var experiment = function(practice, nTrial, finish) {
 		}
 		console.log(stimulus)
 
+		var constantRotation = 26*direction
 		stimulus += constantRotation
 		if (!firstStimulgenerated && stimulus > 180){
 			stimulus = -180 + stimulus
 		}
+		surprise_jump()
+	}
+
+	// desides whether to make a rotational jump back or forth
+	function surprise_jump(){
+		var possible_jump_frequencies = [3, 2]
+		var jump_frequency = possible_jump_frequencies[Math.floor(Math.random() * possible_jump_frequencies.length)];
+
+		if (nTrial%jump_frequency){
+			var jump = calculate_jump()
+			stimulus += jump
+		}
+	}
+
+	function calculate_jump(){
+		var direction = [-1, 1][Math.floor(Math.random() * 2)];
+		var jump = Math.ceil(Math.random()*60)*direction
+		return jump
 	}
 
 	//drawing functions----------------------
@@ -400,7 +420,7 @@ var experiment = function(practice, nTrial, finish) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 10, finishRun1);
+		currentview = new experiment(false, 3, finishRun1);
 	});
 }
 
