@@ -67,7 +67,6 @@ var experiment = function(practice, nTrial, finish) {
 	if (practice) {
 		var nTry = 0;
 	}
-
 	// images
 	var gaborUrls = [
 		"http://i.imgur.com/cMbgmJl.jpg",
@@ -89,6 +88,18 @@ var experiment = function(practice, nTrial, finish) {
 		"http://i.imgur.com/Nn5GmjK.jpg",
 		"http://i.imgur.com/L51lxG6.jpg"];
 
+	//try to load all the gabor images
+	nGabor = gaborUrls.length;
+	gaborA = new Array(nGabor);
+	loadA = new Array(nGabor);
+	for (var i = 0; i < nGabor; i ++) {
+    	loadA[i] = false;
+    	gaborA[i] = new Image();
+    	gaborA[i].src=gaborUrls[i];
+    	gaborA[i].onload = (function(i){return function(){loadA[i] = true}})(i);
+    	//gaborA[i].onload = function(){loadA[i] = true};
+	}
+
 	//set canvas
 	var canvas = document.getElementById('myCanvas');
 	canvas.width = 731;
@@ -109,11 +120,6 @@ var experiment = function(practice, nTrial, finish) {
 	var stimulus
 	makeStimul();
 
-	//set procedures
-	gabor.onload = doOneTrial;
-
-	//load gabor image and trigger experiment
-	gabor.src = gaborUrl;
 
 	//set button in case user missed the patch
 	if (practice){
@@ -167,8 +173,19 @@ var experiment = function(practice, nTrial, finish) {
 		}
 	];
 
+	//triger the trial when gabor is loaded
+	gabor.onload = function(){doOneTrial(trialStepA)};
+
 	var trialInd = 0;
-	doOneTrial(trialStepA);
+	//start the first trial when all images are loaded
+	checkLoading = setInterval(function(){
+		if (loadA.every(function(element){return element;})) {
+			clearInterval(checkLoading);
+			doOneTrial(trialStepA);
+		}
+	}, 100);
+	gabor.src = gaborUrl;
+	//doOneTrial(trialStepA);
 
 	//functions for running the experiment--------------------
 	function doOneTrial(trialStepA){
