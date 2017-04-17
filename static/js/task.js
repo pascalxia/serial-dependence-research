@@ -107,8 +107,6 @@ var experiment = function(practice, nTrial, finish) {
 	var ctx = canvas.getContext('2d');
 
 	//prepare some variables
-	var gaborUrl = gaborUrls[Math.floor(Math.random()*gaborUrls.length)];
-	var gabor = new Image();
 	var centerX = canvas.width / 2;
     var centerY = canvas.height / 2;
 	var centerXPage = centerX + $("#myCanvas").offset().left;
@@ -117,7 +115,8 @@ var experiment = function(practice, nTrial, finish) {
 	var destY = stimulusY*canvas.height;
 	var possible_directions = [-1, 1]
 	var direction = possible_directions[Math.floor(Math.random() * possible_directions.length)];
-	var stimulus
+	var stimulus;
+	var gabor;
 	makeStimul();
 
 
@@ -126,23 +125,10 @@ var experiment = function(practice, nTrial, finish) {
 		document.getElementById('yes_button').style.visibility = 'hidden';
 	} else {
 		document.getElementById('yes_button').style.visibility = 'visible';
-		document.getElementById('yes_button').addEventListener("click", draw_missed_Gabor)
+		document.getElementById('yes_button').addEventListener("click", function(event){
+			drawGabor(destX, destY, stimulus, gabor)})
 	}
 
-
-	function draw_missed_Gabor(event){
-		ctx.save();
-		// Move registration point to the center of the canvas
-		ctx.translate(destX, destY);
-		// Rotate
-		ctx.rotate(stimulus/180*Math.PI);
-        var destWidth = displaysize;
-        var destHeight = displaysize;
-       	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
-		ctx.restore();
-
-		setTimeout(screenForWait, 1000);
-	}
 
 	//define the trial procedure
 	trialStepA = [
@@ -173,9 +159,6 @@ var experiment = function(practice, nTrial, finish) {
 		}
 	];
 
-	//triger the trial when gabor is loaded
-	gabor.onload = function(){doOneTrial(trialStepA)};
-
 	var trialInd = 0;
 	//start the first trial when all images are loaded
 	checkLoading = setInterval(function(){
@@ -184,7 +167,6 @@ var experiment = function(practice, nTrial, finish) {
 			doOneTrial(trialStepA);
 		}
 	}, 100);
-	gabor.src = gaborUrl;
 	//doOneTrial(trialStepA);
 
 	//functions for running the experiment--------------------
@@ -383,7 +365,7 @@ var experiment = function(practice, nTrial, finish) {
 		ctx.stroke();
 	}
 
-	function drawGabor(destX, destY, orientation){
+	function drawGabor(destX, destY, orientation, gabor){
 		ctx.save();
 		// Move registration point to the center of the canvas
 		ctx.translate(destX, destY);
@@ -416,8 +398,10 @@ var experiment = function(practice, nTrial, finish) {
 	function showStimulus(destX, destY, stimulus){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		drawBackground();
+		//randomly choose one gabor pattern
+		gabor = gaborA[Math.floor(Math.random()*gaborA.length)];
 		// draw gabor
-		drawGabor(destX, destY, stimulus);
+		drawGabor(destX, destY, stimulus, gabor);
 	}
 
 	function screenForPause(){
