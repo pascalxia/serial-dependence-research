@@ -46,6 +46,10 @@ var experiment = function(practice, nTrial, finish) {
 	// Load the stage.html snippet into the body of the page
 	psiTurk.showPage('stage.html');
 	//set parameters
+	var regularCounterA = [3, 4];
+	var stepSize = 0;
+	var minJump = 89;
+	var maxJump = 90;
 	var stimulusX = 0.5;
 	var stimulusY = 0.5;
 	var radius = 10;
@@ -117,7 +121,12 @@ var experiment = function(practice, nTrial, finish) {
 	var direction = possible_directions[Math.floor(Math.random() * possible_directions.length)];
 	var stimulus;
 	var gabor;
-	makeStimul();
+	var regularCounter;
+	
+	//initialize the stimulus to a random angle
+	stimulus = Math.random()*360-180;
+	//initialize the counter
+	regularCounter = regularCounterA[Math.floor(Math.random()*regularCounterA.length)];
 
 
 	//set button in case user missed the patch
@@ -267,43 +276,28 @@ var experiment = function(practice, nTrial, finish) {
 		if (trialInd<nTrial) {
 			//set a new value to stimulus
 			// stimulus = Math.random()*360-180;
-			makeStimul();
+			updateStimulus();
 			setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 		} else {
 			finish();
 		}
 	}
 
-	function makeStimul(){
-		var firstStimulgenerated = false
-		if (stimulus == null){
-			stimulus = Math.random()*360-180
-			firstStimulgenerated = true
-		}
-		console.log(stimulus)
-
-		var constantRotation = 26*direction
-		stimulus += constantRotation
-		if (!firstStimulgenerated && stimulus > 180){
-			stimulus = -180 + stimulus
-		}
-		surprise_jump()
-	}
-
-	// desides whether to make a rotational jump back or forth
-	function surprise_jump(){
-		var possible_jump_frequencies = [3, 2]
-		var jump_frequency = possible_jump_frequencies[Math.floor(Math.random() * possible_jump_frequencies.length)];
-
-		if (nTrial%jump_frequency){
-			var jump = calculate_jump()
-			stimulus += jump
+	function updateStimulus(){
+		stimulus += direction*stepSize;
+		if(regularCounter==0){
+			stimulus += calculate_jump();
+			//reset the counter
+			regularCounter = regularCounterA[Math.floor(Math.random()*regularCounterA.length)];
+		} else {
+			regularCounter -= 1;
 		}
 	}
 
 	function calculate_jump(){
-		var direction = [-1, 1][Math.floor(Math.random() * 2)];
-		var jump = Math.ceil(Math.random()*60)*direction
+		var jumpDirection = [-1, 1][Math.floor(Math.random() * 2)];
+		var jump = Math.random()*(maxJump-minJump)+minJump
+		jump = jump * jumpDirection;
 		return jump
 	}
 
@@ -438,7 +432,7 @@ var experiment = function(practice, nTrial, finish) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 3, finishRun1);
+		currentview = new experiment(false, 20, finishRun1);
 	});
 }
 
