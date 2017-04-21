@@ -122,7 +122,7 @@ var experiment = function(practice, nTrial, finish, direction) {
 	var stimulus;
 	var gabor;
 	var regularCounter;
-	
+
 	//initialize the stimulus to a random angle
 	stimulus = Math.random()*360-180;
 	//initialize the counter
@@ -134,10 +134,16 @@ var experiment = function(practice, nTrial, finish, direction) {
 		document.getElementById('yes_button').style.visibility = 'hidden';
 	} else {
 		document.getElementById('yes_button').style.visibility = 'visible';
-		document.getElementById('yes_button').addEventListener("click", function(event){
-			drawGabor(destX, destY, stimulus, gabor)})
+
 	}
 
+	function clickHandler(){
+		document.getElementById('yes_button').removeEventListener("click", clickHandler);
+		doOneTrial(trialStepA);
+
+	  //drawGabor(destX, destY, stimulus, gabor)
+	  //setTimeout(screenForWait, 1000);
+	}
 
 	//define the trial procedure
 	trialStepA = [
@@ -164,6 +170,8 @@ var experiment = function(practice, nTrial, finish, direction) {
 				screenForWait();
 				//add listener to check whether the cursor is brought to center
 				document.addEventListener("mousemove", proceedAfterMoveToCenter);
+				//add listener to button click
+				document.getElementById('yes_button').addEventListener("click", clickHandler)
 			}
 		}
 	];
@@ -296,6 +304,7 @@ var experiment = function(practice, nTrial, finish, direction) {
 
 	function calculate_jump(){
 		var jumpDirection = [-1, 1][Math.floor(Math.random() * 2)];
+		console.log(jumpDirection)
 		var jump = Math.random()*(maxJump-minJump)+minJump
 		jump = jump * jumpDirection;
 		return jump
