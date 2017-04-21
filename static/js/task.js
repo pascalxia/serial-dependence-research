@@ -26,6 +26,8 @@ var instructionPages = [ // add as a list as many pages as you like
 	"before_practice.html"
 ];
 
+//rotation direction of a run
+var direction;
 
 /********************
 * HTML manipulation
@@ -42,14 +44,14 @@ var instructionPages = [ // add as a list as many pages as you like
 ********************/
 //set parameters
 
-var experiment = function(practice, nTrial, finish) {
+var experiment = function(practice, nTrial, finish, direction) {
 	// Load the stage.html snippet into the body of the page
 	psiTurk.showPage('stage.html');
 	//set parameters
 	var regularCounterA = [3, 4];
-	var stepSize = 0;
-	var minJump = 89;
-	var maxJump = 90;
+	var stepSize = 10;
+	var minJump = 50;
+	var maxJump = 60;
 	var stimulusX = 0.5;
 	var stimulusY = 0.5;
 	var radius = 10;
@@ -117,8 +119,6 @@ var experiment = function(practice, nTrial, finish) {
 	var centerYPage = centerY + $("#myCanvas").offset().top;
 	var destX = stimulusX*canvas.width;
 	var destY = stimulusY*canvas.height;
-	var possible_directions = [-1, 1]
-	var direction = possible_directions[Math.floor(Math.random() * possible_directions.length)];
 	var stimulus;
 	var gabor;
 	var regularCounter;
@@ -432,14 +432,18 @@ var experiment = function(practice, nTrial, finish) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 20, finishRun1);
+		//direction is either 1 or -1
+		direction = Math.floor(Math.random()*2)*2-1;
+		currentview = new experiment(false, 10, finishRun1, direction);
 	});
 }
 
 function finishRun1(){
 	psiTurk.showPage('break.html');
 	$('#next').click(function(){
-		currentview = new experiment(false, 10, finishRun2);
+		//use the opposite direction
+		direction *= -1;
+		currentview = new experiment(false, 10, finishRun2, direction);
 	});
 }
 
