@@ -106,6 +106,10 @@ var experiment = function(practice, nTrial, finish, direction) {
     	//gaborA[i].onload = function(){loadA[i] = true};
 	}
 
+	//set timer
+	var time_gabor_disappear
+	var time_user_respond
+
 	//set canvas
 	var canvas = document.getElementById('myCanvas');
 	canvas.width = 731;
@@ -141,14 +145,13 @@ var experiment = function(practice, nTrial, finish, direction) {
 		document.getElementById('yes_button').removeEventListener("click", clickHandler);
 		doOneTrial(trialStepA);
 
-	  //drawGabor(destX, destY, stimulus, gabor)
-	  //setTimeout(screenForWait, 1000);
 	}
 
 	//define the trial procedure
 	trialStepA = [
 		{
 			action: function(){
+				time_test = new Date()/1000
 				//hide cursor within canvas
 				$("#myCanvas").css('cursor', 'none');
 				screenForCross(destX, destY);},
@@ -267,6 +270,10 @@ var experiment = function(practice, nTrial, finish, direction) {
 
 	//a listener that records the response and advances to next page
 	function respond(event){
+		//set the time when user responed
+		time_user_respond = new Date();
+		console.log("time_user_respond    " + time_user_respond.getTime())
+
 		//remove event listeners
 		document.removeEventListener("mousemove", rotateBar);
 		document.removeEventListener("mousedown", respond);
@@ -304,7 +311,6 @@ var experiment = function(practice, nTrial, finish, direction) {
 
 	function calculate_jump(){
 		var jumpDirection = [-1, 1][Math.floor(Math.random() * 2)];
-		console.log(jumpDirection)
 		var jump = Math.random()*(maxJump-minJump)+minJump
 		jump = jump * jumpDirection;
 		return jump
@@ -379,6 +385,9 @@ var experiment = function(practice, nTrial, finish, direction) {
         var destHeight = displaysize;
        	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
 		ctx.restore();
+
+		time_gabor_disappear = new Date();
+		console.log("time_gabor_disappear " + (time_gabor_disappear.getTime() + displayTime))
 	}
 
 	function limitOrient(angle){
