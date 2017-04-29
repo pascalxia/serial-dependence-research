@@ -70,6 +70,7 @@ var experiment = function(practice, nTrial, finish, direction) {
 	var textY = 100;
 	var textTime = 1500;
 
+
 	if (practice) {
 		var nTry = 0;
 	}
@@ -126,6 +127,7 @@ var experiment = function(practice, nTrial, finish, direction) {
 	var stimulus;
 	var gabor;
 	var regularCounter;
+	var run; // the order of runs
 
 	//initialize the stimulus to a random angle
 	stimulus = Math.random()*360-180;
@@ -162,7 +164,10 @@ var experiment = function(practice, nTrial, finish, direction) {
 			time: displayTime
 		},
 		{
-			action: function(){screenForPause();},
+			action: function(){
+				time_gabor_disappear = new Date();
+				console.log("time_gabor_disappear " + (time_gabor_disappear.getTime()))
+				screenForPause();},
 			time: pauseTime
 		},
 		{
@@ -239,6 +244,14 @@ var experiment = function(practice, nTrial, finish, direction) {
 		//remove event listeners
 		document.removeEventListener("mousemove", rotateBar);
 		document.removeEventListener("mousedown", practiceRespond);
+
+		// var	time_user_respond_prctice = new Date();
+		// var x = time_user_respond_prctice.getTime();
+		// var y = time_gabor_disappear.getTime();
+
+		// save data
+		psiTurk.recordUnstructuredData(trialInd, angle);
+
 		//hide the bar
 		screenForPause();
 		//prepare text feedback
@@ -262,6 +275,7 @@ var experiment = function(practice, nTrial, finish, direction) {
 					stimulus = Math.random()*360-180;
 					setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 				} else {
+					psiTurk.recordTrialData({'phase':'practice', 'status':'finish'});
 					finish();
 				}
 			}, textTime);
@@ -282,8 +296,15 @@ var experiment = function(practice, nTrial, finish, direction) {
 
 		//save data
 		psiTurk.recordTrialData({
+			'run': run,
 			'order': trialInd,
-            'angle': angle});
+			'regularCounter': regularCounter,
+            'angle': angle,
+            'direction': direction,
+            'time_user_respond': time_user_respond.getTime(),
+            'time_gabor_disappear': time_gabor_disappear.getTime(),
+            'stimulus': stimulus
+        	});
 
 		//update the trial number to next trial
 		trialInd += 1;
@@ -386,8 +407,6 @@ var experiment = function(practice, nTrial, finish, direction) {
        	ctx.drawImage(gabor, -0.5*displaysize, -0.5*displaysize, destWidth, destHeight);
 		ctx.restore();
 
-		time_gabor_disappear = new Date();
-		console.log("time_gabor_disappear " + (time_gabor_disappear.getTime() + displayTime))
 	}
 
 	function limitOrient(angle){
@@ -450,9 +469,11 @@ var experiment = function(practice, nTrial, finish, direction) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		//direction is either 1 or -1
+		// direction is either 1 or -1
 		direction = Math.floor(Math.random()*2)*2-1;
-		currentview = new experiment(false, 10, finishRun1, direction);
+		// the order of run
+		run = 1
+		currentview = new experiment(false, 3, finishRun1, direction);
 	});
 }
 
@@ -461,7 +482,11 @@ function finishRun1(){
 	$('#next').click(function(){
 		//use the opposite direction
 		direction *= -1;
-		currentview = new experiment(false, 10, finishRun2, direction);
+
+		// the order of run
+		run = 2
+
+		currentview = new experiment(false, 3, finishRun2, direction);
 	});
 }
 
