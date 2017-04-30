@@ -175,7 +175,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			action: function(){
 				//show the cursor
 				$("#myCanvas").css('cursor', 'auto');
-				//drawa the canvas for waiting for bring back the cursor
+				//draw the canvas for waiting for bring back the cursor
 				screenForWait();
 				//add listener to check whether the cursor is brought to center
 				document.addEventListener("mousemove", proceedAfterMoveToCenter);
@@ -193,7 +193,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			doOneTrial(trialStepA);
 		}
 	}, 100);
-	//doOneTrial(trialStepA);
 
 	//functions for running the experiment--------------------
 	function doOneTrial(trialStepA){
@@ -245,10 +244,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		//remove event listeners
 		document.removeEventListener("mousemove", rotateBar);
 		document.removeEventListener("mousedown", practiceRespond);
-
-		// var	time_user_respond_prctice = new Date();
-		// var x = time_user_respond_prctice.getTime();
-		// var y = time_gabor_disappear.getTime();
 
 		// save data
 		psiTurk.recordUnstructuredData(trialInd, angle);
@@ -503,7 +498,7 @@ function finishRun2(){
 		psiTurk.saveData({
 			success: function(){
 				psiTurk.computeBonus('compute_bonus', function() {
-				    psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+				    psiTurk.completeHIT(); // when finished saving compute bonus, then quit
 				});
 			},
 			error: prompt_resubmit});
