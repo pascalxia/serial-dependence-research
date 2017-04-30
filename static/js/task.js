@@ -265,8 +265,8 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			psiTurk.recordTrialData({
 				'run': 0, //0 for practice trial
 				'order': trialInd,
-				'response': angle,
 				'stimulus': stimulus,
+				'response': angle,
 				'nTry': nTry
 			});
 			//reset nTry
@@ -304,12 +304,12 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		psiTurk.recordTrialData({
 			'run': run,
 			'order': trialInd,
-			'regularCounter': regularCounter,
-			'response': angle,
 			'direction': direction,
-			'time_user_respond': time_user_respond.getTime(),
-			'time_gabor_disappear': time_gabor_disappear.getTime(),
+			'regularCounter': regularCounter,
 			'stimulus': stimulus,
+			'response': angle,
+			'time_gabor_disappear': time_gabor_disappear.getTime(),
+			'time_user_respond': time_user_respond.getTime(),
 			'miss': missButton
 		});
 
