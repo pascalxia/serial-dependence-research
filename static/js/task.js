@@ -44,7 +44,9 @@ var direction;
 ********************/
 //set parameters
 
-var experiment = function(practice, nTrial, finish, direction) {
+var experiment = function(practice, nTrial, finish, direction, run) {
+	//run is the order of the run
+
 	// Load the stage.html snippet into the body of the page
 	psiTurk.showPage('stage.html');
 	//set parameters
@@ -127,7 +129,6 @@ var experiment = function(practice, nTrial, finish, direction) {
 	var stimulus;
 	var gabor;
 	var regularCounter;
-	var run; // the order of runs
 
 	//initialize the stimulus to a random angle
 	stimulus = Math.random()*360-180;
@@ -472,8 +473,8 @@ function finishPractice(){
 		// direction is either 1 or -1
 		direction = Math.floor(Math.random()*2)*2-1;
 		// the order of run
-		run = 1
-		currentview = new experiment(false, 3, finishRun1, direction);
+		var run = 1
+		currentview = new experiment(false, 3, finishRun1, direction, run);
 	});
 }
 
@@ -484,9 +485,9 @@ function finishRun1(){
 		direction *= -1;
 
 		// the order of run
-		run = 2
+		var run = 2
 
-		currentview = new experiment(false, 3, finishRun2, direction);
+		currentview = new experiment(false, 3, finishRun2, direction, run);
 	});
 }
 
