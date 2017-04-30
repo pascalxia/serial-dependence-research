@@ -74,7 +74,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 
 
 	if (practice) {
-		var nTry = 0;
+		var nTry = 1;
 	}
 	// images
 	var gaborUrls = [
@@ -256,6 +256,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		ctx.font = "bold 25px serif";
 		//check response
 		if(Math.abs(orientDiff(angle, stimulus)) > errorThresh){
+			nTry += 1;
 			ctx.fillStyle = 'tomato';
 			ctx.fillText("Not accurate enough. Please try again!", textX, textY);
 			//repeat this trial
@@ -268,8 +269,12 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 				'run': 0, //0 for practice trial
 				'order': trialInd,
 				'response': angle,
-				'stimulus': stimulus
+				'stimulus': stimulus,
+				'nTry': nTry
 			});
+			//reset nTry
+			nTry = 1;
+			//display feedback
 			ctx.fillStyle = 'LawnGreen';
 			ctx.fillText("Accurate enough! Going to next trial.", textX, textY);
 			setTimeout(function(){
