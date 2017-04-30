@@ -129,6 +129,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 	var stimulus;
 	var gabor;
 	var regularCounter;
+	var missButton = 0;
 
 	//initialize the stimulus to a random angle
 	stimulus = Math.random()*360-180;
@@ -146,6 +147,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 
 	function clickHandler(){
 		document.getElementById('yes_button').removeEventListener("click", clickHandler);
+		missButton += 1;
 		doOneTrial(trialStepA);
 
 	}
@@ -305,11 +307,14 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			'direction': direction,
 			'time_user_respond': time_user_respond.getTime(),
 			'time_gabor_disappear': time_gabor_disappear.getTime(),
-			'stimulus': stimulus
+			'stimulus': stimulus,
+			'miss': missButton
 		});
 
 		//update the trial number to next trial
 		trialInd += 1;
+		//reset missButton
+		missButton = 0;
 
 		if (trialInd<nTrial) {
 			//set a new value to stimulus
