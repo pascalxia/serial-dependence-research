@@ -266,6 +266,13 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 				setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 			}, textTime);
 		} else{
+			//save data
+			psiTurk.recordTrialData({
+				'run': 0, //0 for practice trial
+				'order': trialInd,
+				'angle': angle,
+				'stimulus': stimulus
+			});
 			ctx.fillStyle = 'LawnGreen';
 			ctx.fillText("Accurate enough! Going to next trial.", textX, textY);
 			setTimeout(function(){
@@ -276,7 +283,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 					stimulus = Math.random()*360-180;
 					setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 				} else {
-					psiTurk.recordTrialData({'phase':'practice', 'status':'finish'});
 					finish();
 				}
 			}, textTime);
@@ -300,12 +306,12 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			'run': run,
 			'order': trialInd,
 			'regularCounter': regularCounter,
-            'angle': angle,
-            'direction': direction,
-            'time_user_respond': time_user_respond.getTime(),
-            'time_gabor_disappear': time_gabor_disappear.getTime(),
-            'stimulus': stimulus
-        	});
+			'angle': angle,
+			'direction': direction,
+			'time_user_respond': time_user_respond.getTime(),
+			'time_gabor_disappear': time_gabor_disappear.getTime(),
+			'stimulus': stimulus
+		});
 
 		//update the trial number to next trial
 		trialInd += 1;
