@@ -247,9 +247,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		document.removeEventListener("mousemove", rotateBar);
 		document.removeEventListener("mousedown", practiceRespond);
 
-		// save data
-		psiTurk.recordUnstructuredData(trialInd, angle);
-
 		//hide the bar
 		screenForPause();
 		//prepare text feedback
