@@ -270,7 +270,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			psiTurk.recordTrialData({
 				'run': 0, //0 for practice trial
 				'order': trialInd,
-				'angle': angle,
+				'response': angle,
 				'stimulus': stimulus
 			});
 			ctx.fillStyle = 'LawnGreen';
@@ -306,7 +306,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			'run': run,
 			'order': trialInd,
 			'regularCounter': regularCounter,
-			'angle': angle,
+			'response': angle,
 			'direction': direction,
 			'time_user_respond': time_user_respond.getTime(),
 			'time_gabor_disappear': time_gabor_disappear.getTime(),
