@@ -180,7 +180,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 				//draw the canvas for waiting for bring back the cursor
 				screenForWait();
 				//add listener to check whether the cursor is brought to center
-				document.addEventListener("mousemove", proceedAfterMoveToCenter);
+				document.getElementById('myCanvas').addEventListener("mousemove", proceedAfterMoveToCenter);
 				//add listener to button click
 				document.getElementById('yes_button').addEventListener("click", clickHandler)
 			}
@@ -219,14 +219,14 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		//alert([cursorX-centerXPage, Math.pow(cursorY-centerYPage, 2), Math.pow(radius, 2)]);
 		if(Math.pow(cursorX-centerXPage, 2) + Math.pow(cursorY-centerYPage, 2) < Math.pow(radius, 2)){
 			//remove the center check listener
-			document.removeEventListener("mousemove", proceedAfterMoveToCenter);
+			document.getElementById('myCanvas').removeEventListener("mousemove", proceedAfterMoveToCenter);
 			//add listener to rotate the bar with cursor movement
-			document.addEventListener("mousemove", rotateBar);
+			document.getElementById('myCanvas').addEventListener("mousemove", rotateBar);
 			//add listener to record response and advance to next page
 			if (practice) {
-				document.addEventListener("mousedown", practiceRespond);
+				document.getElementById('myCanvas').addEventListener("mousedown", practiceRespond);
 			} else{
-				document.addEventListener("mousedown", respond);
+				document.getElementById('myCanvas').addEventListener("mousedown", respond);
 			}
 		}
 	}
@@ -244,8 +244,8 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 
 	function practiceRespond(event){
 		//remove event listeners
-		document.removeEventListener("mousemove", rotateBar);
-		document.removeEventListener("mousedown", practiceRespond);
+		document.getElementById('myCanvas').removeEventListener("mousemove", rotateBar);
+		document.getElementById('myCanvas').removeEventListener("mousedown", practiceRespond);
 
 		//hide the bar
 		screenForPause();
@@ -295,8 +295,8 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		console.log("time_user_respond    " + time_user_respond.getTime())
 
 		//remove event listeners
-		document.removeEventListener("mousemove", rotateBar);
-		document.removeEventListener("mousedown", respond);
+		document.getElementById('myCanvas').removeEventListener("mousemove", rotateBar);
+		document.getElementById('myCanvas').removeEventListener("mousedown", respond);
 		//hide the bar
 		screenForPause();
 
