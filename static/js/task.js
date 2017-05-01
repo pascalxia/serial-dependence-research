@@ -51,9 +51,9 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 	psiTurk.showPage('stage.html');
 	//set parameters
 	var regularCounterA = [3, 4];
-	var stepSize = 10;
-	var minJump = 50;
-	var maxJump = 60;
+	var stepSize = 22;
+	var minJump = 0;
+	var maxJump = 180;
 	var stimulusX = 0.5;
 	var stimulusY = 0.5;
 	var radius = 10;
