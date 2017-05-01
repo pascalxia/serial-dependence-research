@@ -148,7 +148,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 	function clickHandler(){
 		document.getElementById('yes_button').removeEventListener("click", clickHandler);
 		missButton += 1;
-		doOneTrial(trialStepA);
+		respond();
 
 	}
 
