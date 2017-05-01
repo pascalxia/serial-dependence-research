@@ -111,48 +111,101 @@
 	<body>
 		<div id="container-consent">
 			<div id="consent">
+				<!--
+					If assignmentid is "ASSIGNMENT_ID_NOT_AVAILABLE"
+					it means the participant has NOT accepted your hit.
+					This should display the typical advertisement about
+					your experiment: who can participate, what the
+					payment is, the time, etc...
+				-->
+				{% if assignmentid == "ASSIGNMENT_ID_NOT_AVAILABLE" %}
+					<hr />
 
-			    <hr />
+					<div class="legal well">
 
-			    <div class="legal well">
+						<p>
+							This survey takes about 20 minutes. You&#39;ll need to use a mouse to adjust an orientation bar&nbsp;to match an angle previously displayed. Please read the instructions once you accept the HIT for more information. 
+						</p>
+						<p>
+							In the beginning of the survey, you need to agree on a consent form. The compensation rate indicated in the consent form is $3.30 per hour. The compensation for a 20-minute survey is therefore $1.10. Please do not take this survey if you do not agree on the compensation.
+						</p>
+						<p>
+							<strong>Each participant&#39;s answers are compared with the answers given by all the other participants. Participants who give answers that are unreasonably different from others&#39; answers will not be paid.&nbsp;</strong>
+						</p>
+						<div class="alert alert-danger">
+							<strong>This task can only be completed once.</strong>
+							If you have already completed this task before the system will not
+							allow you to run again. If this looks familiar please return the
+							HIT so someone else can participate.
+						</div>
+						<p>
+							Otherwise, please click the "Accept HIT" button on the Amazon site
+							above to begin the task.
+						</p>
+					</div>
+				
+				
+				{% else %}
+					<!--
+						OTHERWISE
+						If assignmentid is NOT "ASSIGNMENT_ID_NOT_AVAILABLE"
+						it means the participant has accepted your hit.
+						You should thus show them instructions to begin the
+						experiment ... usually a button to launch a new browser
+						window pointed at your server.
 
-			        <p>
-			            Thank you for your participation! This experiment is about orientation perception. In each trial, a patch of dark and bright stripes will be displayed at a certain orientation for 0.5 seconds. Please pay attention to the orientation of the stripes. In each trial, after the stripe patch is displayed a red circle will appear at the center of the screen. Please move your mouse cursor onto the red circle and then the circle will turn into a green circle with a black bar. Then please move the mouse to adjust the orientation of the bar so that it looks identical to the orientation of the stripe patch that you have just seen. After you have matched the orientation, you can click the left mouse key to proceed to the next trial.
-					</p>
-					<p> If occasionally you missed the display of the stripe patch, 	instead of making a random guess, please click the button "Yes, unfortunately I missed the display of the arrow" to redo that trial.
-					</p>
-					<p>
-			            There are 200 trials, which take about 20 minutes in total. When you finish 100 trials, the web page will suggest you take a break. When you are ready for the next 100 trials, click the “next" button at the right bottom corner of the screen.
-			        </p>
-			        <p>
-			            After you advance from this page, you will be brought to a consent form where you can agree to the terms. Again, thank you for your participation!
-			        </p>
+						It is important you do not change the code for the
+						openwindow() function below if you want you experiment
+						to work.
+					-->
+					<hr />
 
-		            <script type="text/javascript">
-		        		function openwindow() {
-		            		popup = window.open('{{ server_location }}/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+1024+',height='+768+'');
-		          		}
-		            </script>
+					<div class="legal well">
 
-			    </div>
+						<p>
+							Thank you for your participation! This experiment is about orientation perception. In each trial, a patch of dark and bright stripes will be displayed at a certain orientation for 0.5 seconds. Please pay attention to the orientation of the stripes. In each trial, after the stripe patch is displayed a red circle will appear at the center of the screen. Please move your mouse cursor onto the red circle and then the circle will turn into a green circle with a black bar. Then please move the mouse to adjust the orientation of the bar so that it looks identical to the orientation of the stripe patch that you have just seen. After you have matched the orientation, you can click the left mouse key to proceed to the next trial.
+						</p>
+						<p> If occasionally you missed the display of the stripe patch, 	instead of making a random guess, please click the button "Yes, unfortunately I missed the display of the arrow" to redo that trial.
+						</p>
+						<p>
+							There are 200 trials, which take about 20 minutes in total. When you finish 100 trials, the web page will suggest you take a break. When you are ready for the next 100 trials, click the “next" button at the right bottom corner of the screen.
+						</p>
+						<p>
+							After you advance from this page, you will be brought to a consent form where you can agree to the terms. Again, thank you for your participation!
+						</p>
 
-			    <hr />
+						<script type="text/javascript">
+							function openwindow() {
+								popup = window.open('{{ server_location }}/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+1024+',height='+768+'');
+								popup.onunload = function() { location.reload(true) };
+							}
+						</script>
+						<div class="alert alert-warning">
+							<b>Warning</b>: Please disable pop-up blockers before continuing.
+						</div>
 
+					</div>
 
-			    <div class="instructionsnav">
-			        <div class="row">
-			            <div class="col-xs-2">
-			                <!-- no previous button on first screen -->
-			            </div>
-			            <div class="col-xs-8">
-			            </div>
-			            <div class="col-xs-2">
-	                    	<button type="button" class="btn btn-primary btn-lg" onClick="openwindow();">
-	                		  Next
-	                		</button>
-			            </div>
-			        </div>
-			    </div>
+					<hr />
+				
+					<div class="instructionsnav">
+						<div class="row">
+							<div class="col-xs-2">
+								<!-- no previous button on first screen -->
+							</div>
+							<div class="col-xs-8">
+							</div>
+							<div class="col-xs-2">
+								<button type="button" class="btn btn-primary btn-lg" onClick="openwindow();">
+								  Next
+								</button>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+				<!--
+					endif
+				-->
 			</div>
 		</div>
 
