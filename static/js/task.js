@@ -500,16 +500,15 @@ function finishRun1(){
 }
 
 function finishRun2(){
-	psiTurk.showPage('end.html');
-	$("#next").click(function () {
-		psiTurk.saveData({
-			success: function(){
-				psiTurk.computeBonus('compute_bonus', function() {
-				    psiTurk.completeHIT(); // when finished saving compute bonus, then quit
-				});
-			},
-			error: prompt_resubmit});
+	psiTurk.saveData({
+		success: function(){
+			psiTurk.computeBonus('compute_bonus', function() {
+				psiTurk.completeHIT(); // when finished saving compute bonus, then quit
+			});
+		},
+		error: prompt_resubmit
 	});
+	
 	prompt_resubmit = function() {
 		document.body.innerHTML = error_message;
 		$("#resubmit").click(resubmit);
