@@ -500,6 +500,11 @@ function finishRun1(){
 }
 
 function finishRun2(){
+	prompt_resubmit = function() {
+		document.body.innerHTML = error_message;
+		$("#resubmit").click(resubmit);
+	};
+
 	psiTurk.saveData({
 		success: function(){
 			psiTurk.computeBonus('compute_bonus', function() {
@@ -509,10 +514,7 @@ function finishRun2(){
 		error: prompt_resubmit
 	});
 	
-	prompt_resubmit = function() {
-		document.body.innerHTML = error_message;
-		$("#resubmit").click(resubmit);
-	};
+	
 }
 
 // Task object to keep track of the current phase
