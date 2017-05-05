@@ -169,7 +169,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		{
 			action: function(){
 				time_gabor_disappear = new Date();
-				console.log("time_gabor_disappear " + (time_gabor_disappear.getTime()))
 				screenForPause();},
 			time: pauseTime
 		},
@@ -292,7 +291,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 	function respond(event){
 		//set the time when user responed
 		time_user_respond = new Date();
-		console.log("time_user_respond    " + time_user_respond.getTime())
 
 		//remove event listeners
 		document.getElementById('myCanvas').removeEventListener("mousemove", rotateBar);
