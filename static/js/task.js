@@ -28,6 +28,8 @@ var instructionPages = [ // add as a list as many pages as you like
 
 //rotation direction of a run
 var direction;
+var nTrialPerRun = 100;
+var nPracticeTrial = 3;
 
 /********************
 * HTML manipulation
@@ -480,7 +482,7 @@ function finishPractice(){
 		direction = Math.floor(Math.random()*2)*2-1;
 		// the order of run
 		var run = 1
-		currentview = new experiment(false, 3, finishRun1, direction, run);
+		currentview = new experiment(false, nTrialPerRun, finishRun1, direction, run);
 	});
 }
 
@@ -493,7 +495,7 @@ function finishRun1(){
 		// the order of run
 		var run = 2
 
-		currentview = new experiment(false, 3, finishRun2, direction, run);
+		currentview = new experiment(false, nTrialPerRun, finishRun2, direction, run);
 	});
 }
 
@@ -525,7 +527,7 @@ $(window).load( function(){
     psiTurk.doInstructions(
     	instructionPages, // a list of pages you want to display in sequence
     	function() {
-    		currentview = new experiment(true, 3, finishPractice);
+    		currentview = new experiment(true, nPracticeTrial, finishPractice);
     	} // what you want to do when you are done with instructions
     );
 });
