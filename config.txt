@@ -17,7 +17,7 @@ database_url = sqlite:///participants.db
 table_name = orientation_sd
 
 [Server Parameters]
-host = 0.0.0.0
+host = localhost
 port = 22362
 cutoff_time = 120
 logfile = server.log
