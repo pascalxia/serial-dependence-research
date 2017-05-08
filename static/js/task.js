@@ -28,7 +28,7 @@ var instructionPages = [ // add as a list as many pages as you like
 
 //rotation direction of a run
 var direction;
-var nTrialPerRun = 100;
+var nTrialPerRun = 10;
 var nPracticeTrial = 3;
 
 /********************
