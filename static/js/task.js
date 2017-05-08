@@ -320,7 +320,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 
 		if (trialInd <= nTrial) {
 			//set a new value to stimulus
-			// stimulus = Math.random()*360-180;
+			updateRegularCounter();
 			updateStimulus();
 			setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
 		} else {
@@ -331,7 +331,13 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 	function updateStimulus(){
 		stimulus += direction*stepSize;
 		if(regularCounter==0){
+			//add a random jump
 			stimulus += calculate_jump();
+		}
+	}
+	
+	function updateRegularCounter(){
+		if(regularCounter==0){
 			//reset the counter
 			regularCounter = regularCounterA[Math.floor(Math.random()*regularCounterA.length)];
 		} else {
