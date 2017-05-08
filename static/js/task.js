@@ -29,6 +29,11 @@ var instructionPages = [ // add as a list as many pages as you like
 var direction;
 var nTrialPerRun = 100;
 var nPracticeTrial = 3;
+if (mycondition==1){
+	direction = 1;
+} else{
+	direction = -1;
+}
 
 /********************
 * HTML manipulation
@@ -522,8 +527,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 function finishPractice(){
 	psiTurk.showPage('before_formal.html');
 	$('#next').click(function(){
-		// direction is either 1 or -1
-		direction = Math.floor(Math.random()*2)*2-1;
 		// the order of run
 		var run = 1
 		currentview = new experiment(false, nTrialPerRun, finishRun1, direction, run);
@@ -533,9 +536,6 @@ function finishPractice(){
 function finishRun1(){
 	psiTurk.showPage('break.html');
 	$('#next').click(function(){
-		//use the opposite direction
-		direction *= -1;
-
 		// the order of run
 		var run = 2
 
