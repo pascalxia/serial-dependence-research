@@ -147,13 +147,6 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 
 	}
 
-	function clickHandler(){
-		document.getElementById('yes_button').removeEventListener("click", clickHandler);
-		missButton += 1;
-		respond();
-
-	}
-
 	//define the trial procedure
 	trialStepA = [
 		{
@@ -183,7 +176,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 				//add listener to check whether the cursor is brought to center
 				document.getElementById('myCanvas').addEventListener("mousemove", proceedAfterMoveToCenter);
 				//add listener to button click
-				document.getElementById('yes_button').addEventListener("click", clickHandler)
+				document.getElementById('yes_button').addEventListener("click", skip)
 			}
 		}
 	];
@@ -289,18 +282,14 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		}
 	}
 
-	//a listener that records the response and advances to next page
-	function respond(event){
-		//set the time when user responed
-		time_user_respond = new Date();
-
-		//remove event listeners
+	function removeMouseListeners(){
+		document.getElementById('myCanvas').removeEventListener("mousemove", proceedAfterMoveToCenter);
 		document.getElementById('myCanvas').removeEventListener("mousemove", rotateBar);
 		document.getElementById('myCanvas').removeEventListener("mousedown", respond);
-		//hide the bar
-		screenForPause();
+		document.getElementById('yes_button').removeEventListener("click", skip);
+	}
 
-		//save data
+	function saveTrialData(){
 		psiTurk.recordTrialData({
 			'run': run,
 			'order': trialInd,
@@ -312,6 +301,56 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			'time_user_respond': time_user_respond.getTime(),
 			'miss': missButton
 		});
+	}
+
+	//a listener that skips the current trial, saves a mark and 
+	//reset for next trial
+	function skip(event){
+		//set the time when user responed
+		time_user_respond = new Date();
+
+		//remove event listeners
+		removeMouseListeners();
+
+		//hide the bar
+		screenForPause();
+
+		//change button click counter
+		missButton += 1;
+
+		//save data
+		saveTrialData();
+
+		//update the trial number to next trial
+		trialInd += 1;
+		//reset missButton
+		missButton = 0;
+
+		if (trialInd <= nTrial) {
+			//reset the counter
+			regularCounter = regularCounterA[Math.floor(Math.random()*regularCounterA.length)];
+			//set a new random value to stimulus
+			stimulus = Math.random()*360-180;
+			setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
+		} else {
+			finish();
+		}
+
+	}
+
+
+	//a listener that records the response and advances to next page
+	function respond(event){
+		//set the time when user responed
+		time_user_respond = new Date();
+
+		//remove event listeners
+		removeMouseListeners();
+		//hide the bar
+		screenForPause();
+
+		//save data
+		saveTrialData();
 
 		//update the trial number to next trial
 		trialInd += 1;
