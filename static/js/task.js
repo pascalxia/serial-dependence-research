@@ -188,7 +188,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		}
 	];
 
-	var trialInd = 0;
+	var trialInd = 1;
 	//start the first trial when all images are loaded
 	checkLoading = setInterval(function(){
 		if (loadA.every(function(element){return element;})) {
@@ -278,7 +278,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 			setTimeout(function(){
 				//update the trial number to next trial
 				trialInd += 1;
-				if (trialInd<nTrial) {
+				if (trialInd <= nTrial) {
 					//set a new value to stimulus
 					stimulus = Math.random()*360-180;
 					setTimeout(doOneTrial(trialStepA), postTrialPauseTime);
@@ -318,7 +318,7 @@ var experiment = function(practice, nTrial, finish, direction, run) {
 		//reset missButton
 		missButton = 0;
 
-		if (trialInd<nTrial) {
+		if (trialInd <= nTrial) {
 			//set a new value to stimulus
 			// stimulus = Math.random()*360-180;
 			updateStimulus();
