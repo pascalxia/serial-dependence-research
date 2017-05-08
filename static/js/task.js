@@ -15,7 +15,6 @@ var mycounterbalance = counterbalance;  // they tell you which condition you hav
 var pages = [
 	"before_formal.html",
 	"break.html",
-	"end.html",
 	"before_practice.html",
 	"stage.html"
 ];
